@@ -69,9 +69,12 @@ Most suitable for csv files created from database tables`,
 		ctx, err := NewContext(
 			fs,
 			primaryKeyPositions,
+			deltaPrimaryKeyPositions,
 			valueColumnPositions,
+			deltaValueColumnPositions,
 			ignoreValueColumnPositions,
 			includeColumnPositions,
+			deltaIncludeColumnPositions,
 			format,
 			baseFilename,
 			deltaFilename,
@@ -120,22 +123,28 @@ func Execute() {
 }
 
 var (
-	primaryKeyPositions        []int
-	valueColumnPositions       []int
-	ignoreValueColumnPositions []int
-	includeColumnPositions     []int
-	format                     string
-	separator                  string
-	lazyQuotes                 bool
+	primaryKeyPositions         []int
+	deltaPrimaryKeyPositions    []int
+	valueColumnPositions        []int
+	deltaValueColumnPositions   []int
+	ignoreValueColumnPositions  []int
+	includeColumnPositions      []int
+	deltaIncludeColumnPositions []int
+	format                      string
+	separator                   string
+	lazyQuotes                  bool
 )
 
 func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	rootCmd.Flags().IntSliceVarP(&primaryKeyPositions, "primary-key", "p", []int{0}, "Primary key positions of the Input CSV as comma separated values Eg: 1,2")
+	rootCmd.Flags().IntSliceVarP(&deltaPrimaryKeyPositions, "delta-primary-key", "", []int{0}, "Primary key positions of the Input Delta-CSV as comma separated values Eg: 1,2")
 	rootCmd.Flags().IntSliceVarP(&valueColumnPositions, "columns", "", []int{}, "Selectively compare positions in CSV Eg: 1,2. Default is entire row")
+	rootCmd.Flags().IntSliceVarP(&deltaValueColumnPositions, "delta-columns", "", []int{}, "Selectively compare positions in Delta-CSV Eg: 1,2. Default is entire row")
 	rootCmd.Flags().IntSliceVarP(&ignoreValueColumnPositions, "ignore-columns", "", []int{}, "Inverse of --columns flag. This cannot be used if --columns are specified")
 	rootCmd.Flags().IntSliceVarP(&includeColumnPositions, "include", "", []int{}, "Include positions in CSV to display Eg: 1,2. Default is entire row")
+	rootCmd.Flags().IntSliceVarP(&deltaIncludeColumnPositions, "delta-include", "", []int{}, "Include positions in Delta-CSV to display Eg: 1,2. Default is entire row")
 	rootCmd.Flags().StringVarP(&format, "format", "o", "diff", fmt.Sprintf("Available (%s)", strings.Join(allFormats, "|")))
 	rootCmd.Flags().StringVarP(&separator, "separator", "s", ",", "use specific separator (\\t, or any one character string)")
 

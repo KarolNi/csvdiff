@@ -43,6 +43,9 @@ func TestPrimaryKeyPositions(t *testing.T) {
 				nil,
 				nil,
 				nil,
+				nil,
+				nil,
+				nil,
 				"json",
 				"/base.csv",
 				"/delta.csv",
@@ -86,6 +89,9 @@ func TestValueColumnPositions(t *testing.T) {
 			ctx, err := cmd.NewContext(fs,
 				nil,
 				tt.in,
+				tt.in,
+				nil,
+				nil,
 				nil,
 				nil,
 				"json",
@@ -115,6 +121,9 @@ func TestNewContext(t *testing.T) {
 				nil,
 				nil,
 				nil,
+				nil,
+				nil,
+				nil,
 				"",
 				"/base.csv",
 				"/delta.csv",
@@ -128,6 +137,9 @@ func TestNewContext(t *testing.T) {
 		t.Run("valid format", func(t *testing.T) {
 			_, err := cmd.NewContext(
 				fs,
+				nil,
+				nil,
+				nil,
 				nil,
 				nil,
 				nil,
@@ -149,6 +161,9 @@ func TestNewContext(t *testing.T) {
 				nil,
 				nil,
 				nil,
+				nil,
+				nil,
+				nil,
 				"jSOn",
 				"/base.csv",
 				"/delta.csv",
@@ -165,6 +180,9 @@ func TestNewContext(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		_, err := cmd.NewContext(
 			fs,
+			nil,
+			nil,
+			nil,
 			nil,
 			nil,
 			nil,
@@ -191,6 +209,9 @@ func TestNewContext(t *testing.T) {
 			nil,
 			nil,
 			nil,
+			nil,
+			nil,
+			nil,
 			"json",
 			"/base.csv",
 			"/delta.csv",
@@ -213,6 +234,9 @@ func TestNewContext(t *testing.T) {
 			nil,
 			nil,
 			nil,
+			nil,
+			nil,
+			nil,
 			"json",
 			"/base.csv",
 			"/delta.csv",
@@ -228,6 +252,9 @@ func TestNewContext(t *testing.T) {
 
 		_, err := cmd.NewContext(
 			fs,
+			nil,
+			nil,
+			nil,
 			nil,
 			nil,
 			nil,
@@ -261,6 +288,9 @@ func TestNewContext(t *testing.T) {
 				nil,
 				nil,
 				nil,
+				nil,
+				nil,
+				nil,
 				"json",
 				"/base.csv",
 				"/delta.csv",
@@ -271,13 +301,36 @@ func TestNewContext(t *testing.T) {
 			assert.EqualError(t, err, "validation failed: --primary-key positions are out of bounds")
 		})
 
+		t.Run("delta primary key positions", func(t *testing.T) {
+			_, err := cmd.NewContext(
+				fs,
+				nil,
+				[]int{4},
+				nil,
+				nil,
+				nil,
+				nil,
+				nil,
+				"json",
+				"/base.csv",
+				"/delta.csv",
+				',',
+				false,
+			)
+
+			assert.EqualError(t, err, "validation failed: --delta-primary-key positions are out of bounds")
+		})
+
 		t.Run("include positions", func(t *testing.T) {
 			_, err := cmd.NewContext(
 				fs,
 				nil,
 				nil,
 				nil,
+				nil,
+				nil,
 				[]int{4},
+				nil,
 				"json",
 				"/base.csv",
 				"/delta.csv",
@@ -288,11 +341,34 @@ func TestNewContext(t *testing.T) {
 			assert.EqualError(t, err, "validation failed: --include positions are out of bounds")
 		})
 
+		t.Run("delta-include positions", func(t *testing.T) {
+			_, err := cmd.NewContext(
+				fs,
+				nil,
+				nil,
+				nil,
+				nil,
+				nil,
+				nil,
+				[]int{4},
+				"json",
+				"/base.csv",
+				"/delta.csv",
+				',',
+				false,
+			)
+
+			assert.EqualError(t, err, "validation failed: --delta-include positions are out of bounds")
+		})
+
 		t.Run("value positions", func(t *testing.T) {
 			_, err := cmd.NewContext(
 				fs,
 				nil,
+				nil,
 				[]int{4},
+				nil,
+				nil,
 				nil,
 				nil,
 				"json",
@@ -303,6 +379,26 @@ func TestNewContext(t *testing.T) {
 			)
 
 			assert.EqualError(t, err, "validation failed: --columns positions are out of bounds")
+		})
+
+		t.Run("delta value positions", func(t *testing.T) {
+			_, err := cmd.NewContext(
+				fs,
+				nil,
+				nil,
+				[]int{0},
+				[]int{4},
+				nil,
+				nil,
+				nil,
+				"json",
+				"/base.csv",
+				"/delta.csv",
+				',',
+				false,
+			)
+
+			assert.EqualError(t, err, "validation failed: --delta-columns positions are out of bounds")
 		})
 
 		t.Run("inequal base and delta files", func(t *testing.T) {
@@ -318,13 +414,16 @@ func TestNewContext(t *testing.T) {
 				nil,
 				nil,
 				nil,
+				nil,
+				nil,
+				nil,
 				"json",
 				"/base.csv",
 				"/delta.csv",
 				',',
 				false,
 			)
-			assert.EqualError(t, err, "base-file and delta-file columns count do not match")
+			assert.EqualError(t, err, "base-file and delta-file columns count do not match and columns to selective compare not specified")
 		})
 	})
 
@@ -335,8 +434,11 @@ func TestNewContext(t *testing.T) {
 		_, err := cmd.NewContext(
 			fs,
 			nil,
+			nil,
 			[]int{0},
+			nil,
 			[]int{0},
+			nil,
 			nil,
 			"jSOn",
 			"/base.csv",
@@ -355,14 +457,20 @@ func TestConfig_DigestConfig(t *testing.T) {
 		setupFiles(t, fs)
 
 		valueColumns := digest.Positions{0, 1, 2}
+		deltaValueColumns := digest.Positions{0, 1, 2}
 		primaryColumns := digest.Positions{0, 1}
+		deltaPrimaryColumns := digest.Positions{0, 1}
 		includeColumns := digest.Positions{2}
+		deltaIncludeColumns := digest.Positions{2}
 		ctx, err := cmd.NewContext(
 			fs,
 			primaryColumns,
+			deltaPrimaryColumns,
 			valueColumns,
+			deltaValueColumns,
 			nil,
 			includeColumns,
+			deltaIncludeColumns,
 			"jSOn",
 			"/base.csv",
 			"/delta.csv",
@@ -383,9 +491,9 @@ func TestConfig_DigestConfig(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, deltaConfig.Reader)
-		assert.Equal(t, valueColumns, deltaConfig.Value)
-		assert.Equal(t, primaryColumns, deltaConfig.Key)
-		assert.Equal(t, includeColumns, deltaConfig.Include)
+		assert.Equal(t, deltaValueColumns, deltaConfig.Value)
+		assert.Equal(t, deltaPrimaryColumns, deltaConfig.Key)
+		assert.Equal(t, deltaIncludeColumns, deltaConfig.Include)
 	})
 	t.Run("should infer values columns as inverse of ignore columns digest ctx", func(t *testing.T) {
 		fs := afero.NewMemMapFs()
@@ -396,7 +504,10 @@ func TestConfig_DigestConfig(t *testing.T) {
 		ctx, err := cmd.NewContext(
 			fs,
 			primaryColumns,
+			primaryColumns,
 			nil,
+			nil,
+			ignoreValueColumns,
 			ignoreValueColumns,
 			nil,
 			"jSOn",
@@ -422,6 +533,7 @@ func TestConfig_DigestConfig(t *testing.T) {
 		assert.Equal(t, primaryColumns, deltaConfig.Key)
 	})
 }
+
 func setupFiles(t *testing.T, fs afero.Fs) {
 	{
 		baseContent := []byte("id,name,age,desc")
