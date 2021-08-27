@@ -293,6 +293,7 @@ func getColumnsCount(fs afero.Fs, filename string, separator rune, lazyQuotes bo
 	csvReader := csv.NewReader(base)
 	csvReader.Comma = separator
 	csvReader.LazyQuotes = lazyQuotes
+	csvReader.FieldsPerRecord = -1
 	record, err := csvReader.Read()
 	if err != nil {
 		if err == io.EOF {

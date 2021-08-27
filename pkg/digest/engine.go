@@ -61,6 +61,7 @@ func (e Engine) StreamDigests() (chan []Digest, chan error) {
 		reader := csv.NewReader(e.config.Reader)
 		reader.Comma = e.config.Separator
 		reader.LazyQuotes = e.config.LazyQuotes
+		reader.FieldsPerRecord = -1
 		for {
 			lines, eofReached, err := getNextNLines(reader)
 

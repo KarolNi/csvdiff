@@ -35,6 +35,7 @@ func Create(config *Config) (map[uint64]uint64, map[uint64][]string, error) {
 	reader := csv.NewReader(config.Reader)
 	reader.Comma = config.Separator
 	reader.LazyQuotes = config.LazyQuotes
+	reader.FieldsPerRecord = -1
 	output := make(map[uint64]uint64)
 	sourceMap := make(map[uint64][]string)
 
