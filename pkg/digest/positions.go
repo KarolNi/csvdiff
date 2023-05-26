@@ -11,7 +11,13 @@ type Positions []int
 // Join plucks the values from CSV from
 // their respective positions and concatenates
 // them using separator as a string.
-func (p Positions) Join(csv []string, separator string) string {
+func (p Positions) Join(csv []string, separator string, ignoreWhitespace bool) string {
+	if ignoreWhitespace {
+		for i, each := range csv {
+			csv[i] = strings.TrimSpace(each)
+		}
+	}
+
 	if len(p) == 0 {
 		return strings.Join(csv, separator)
 	}
@@ -27,8 +33,13 @@ func (p Positions) Join(csv []string, separator string) string {
 
 // String method converts to csv mapping to positions
 // escapes necessary characters
-func (p Positions) String(csv []string, separator rune) string {
+func (p Positions) String(csv []string, separator rune, ignoreWhitespace bool) string {
 	selectiveCsv := csv
+	if ignoreWhitespace {
+		for i, each := range selectiveCsv {
+			selectiveCsv[i] = strings.TrimSpace(each)
+		}
+	}
 	if len(p) != 0 {
 		selectiveCsv = make([]string, 0, len(p))
 		for _, pos := range p {
@@ -39,6 +50,7 @@ func (p Positions) String(csv []string, separator rune) string {
 	csvStr := strings.Builder{}
 	w := csvlib.NewWriter(&csvStr)
 	w.Comma = separator
+
 	_ = w.Write(selectiveCsv)
 	w.Flush()
 	csvWithNewLine := csvStr.String()

@@ -29,6 +29,7 @@ type Context struct {
 	deltaRecordCount            int
 	separator                   rune
 	lazyQuotes                  bool
+	ignoreWhitespace            bool
 }
 
 // NewContext can take all CLI flags and create a cmd.Context
@@ -48,6 +49,7 @@ func NewContext(
 	deltaFilename string,
 	separator rune,
 	lazyQuotes bool,
+	ignoreWhitespace bool,
 ) (*Context, error) {
 	baseRecordCount, err := getColumnsCount(fs, baseFilename, separator, lazyQuotes)
 	if deltaPrimaryKeyPositions == nil {
@@ -140,6 +142,7 @@ func NewContext(
 		deltaRecordCount:            deltaRecordCount,
 		separator:                   separator,
 		lazyQuotes:                  lazyQuotes,
+		ignoreWhitespace:            ignoreWhitespace,
 	}
 
 	if err := ctx.validate(); err != nil {
@@ -309,12 +312,13 @@ func getColumnsCount(fs afero.Fs, filename string, separator rune, lazyQuotes bo
 // that is needed to start the diff process
 func (c *Context) BaseDigestConfig() (digest.Config, error) {
 	return digest.Config{
-		Reader:     c.baseFile,
-		Value:      c.valueColumnPositions,
-		Key:        c.primaryKeyPositions,
-		Include:    c.includeColumnPositions,
-		Separator:  c.separator,
-		LazyQuotes: c.lazyQuotes,
+		Reader:           c.baseFile,
+		Value:            c.valueColumnPositions,
+		Key:              c.primaryKeyPositions,
+		Include:          c.includeColumnPositions,
+		Separator:        c.separator,
+		LazyQuotes:       c.lazyQuotes,
+		IgnoreWhitespace: c.ignoreWhitespace,
 	}, nil
 }
 
@@ -322,12 +326,13 @@ func (c *Context) BaseDigestConfig() (digest.Config, error) {
 // that is needed to start the diff process
 func (c *Context) DeltaDigestConfig() (digest.Config, error) {
 	return digest.Config{
-		Reader:     c.deltaFile,
-		Value:      c.deltaValueColumnPositions,
-		Key:        c.deltaPrimaryKeyPositions,
-		Include:    c.deltaIncludeColumnPositions,
-		Separator:  c.separator,
-		LazyQuotes: c.lazyQuotes,
+		Reader:           c.deltaFile,
+		Value:            c.deltaValueColumnPositions,
+		Key:              c.deltaPrimaryKeyPositions,
+		Include:          c.deltaIncludeColumnPositions,
+		Separator:        c.separator,
+		LazyQuotes:       c.lazyQuotes,
+		IgnoreWhitespace: c.ignoreWhitespace,
 	}, nil
 }
 

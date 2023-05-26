@@ -15,7 +15,7 @@ func TestPositions_MapValues(t *testing.T) {
 		positions := digest.Positions([]int{0, 3})
 		csv := []string{"zero", "one", "two", "three"}
 
-		actual := positions.Join(csv, comma)
+		actual := positions.Join(csv, comma, false)
 		expected := "zero,three"
 
 		assert.Equal(t, expected, actual)
@@ -25,7 +25,7 @@ func TestPositions_MapValues(t *testing.T) {
 		positions := digest.Positions([]int{})
 		csv := []string{"zero", "one", "two", "three"}
 
-		actual := positions.Join(csv, comma)
+		actual := positions.Join(csv, comma, false)
 		expected := strings.Join(csv, comma)
 
 		assert.Equal(t, expected, actual)
@@ -35,7 +35,7 @@ func TestPositions_MapValues(t *testing.T) {
 		positions := digest.Positions([]int{0, 3})
 		csv := []string{"zero\n", "one", "two", "three,3"}
 
-		actual := positions.Join(csv, comma)
+		actual := positions.Join(csv, comma, false)
 		expected := "zero\n,three,3"
 
 		assert.Equal(t, expected, actual)
@@ -47,7 +47,7 @@ func TestPositions_String(t *testing.T) {
 		positions := digest.Positions([]int{0, 3})
 		csv := []string{"zero", "one", "two", "three"}
 
-		actual := positions.String(csv, ',')
+		actual := positions.String(csv, ',', false)
 		expected := "zero,three"
 
 		assert.Equal(t, expected, actual)
@@ -57,7 +57,7 @@ func TestPositions_String(t *testing.T) {
 		positions := digest.Positions([]int{0, 3})
 		csv := []string{"zero", "one", "two", "three"}
 
-		actual := positions.String(csv, '|')
+		actual := positions.String(csv, '|', false)
 		expected := "zero|three"
 
 		assert.Equal(t, expected, actual)
@@ -67,7 +67,7 @@ func TestPositions_String(t *testing.T) {
 		positions := digest.Positions([]int{})
 		csv := []string{"zero", "one", "two", "three"}
 
-		actual := positions.String(csv, ',')
+		actual := positions.String(csv, ',', false)
 		expected := strings.Join(csv, comma)
 
 		assert.Equal(t, expected, actual)
@@ -77,7 +77,7 @@ func TestPositions_String(t *testing.T) {
 		positions := digest.Positions([]int{0, 3})
 		csv := []string{"zero\n", "one", "two", "three,3"}
 
-		actual := positions.String(csv, ',')
+		actual := positions.String(csv, ',', false)
 		expected := "\"zero\n\",\"three,3\""
 
 		assert.Equal(t, expected, actual)

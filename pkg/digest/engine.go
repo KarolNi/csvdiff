@@ -94,7 +94,7 @@ func (e Engine) digestForLines(lines [][]string, digestChannel chan []Digest, wg
 	output := make([]Digest, 0, len(lines))
 	separator := string(e.config.Separator)
 	for _, line := range lines {
-		output = append(output, CreateDigest(line, separator, e.config.Key, e.config.Value))
+		output = append(output, CreateDigest(line, separator, e.config.IgnoreWhitespace, e.config.Key, e.config.Value))
 	}
 
 	digestChannel <- output

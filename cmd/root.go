@@ -80,6 +80,7 @@ Most suitable for csv files created from database tables`,
 			deltaFilename,
 			runeSeparator,
 			lazyQuotes,
+			ignoreWhitespace,
 		)
 
 		if err != nil {
@@ -133,6 +134,7 @@ var (
 	format                      string
 	separator                   string
 	lazyQuotes                  bool
+	ignoreWhitespace            bool
 )
 
 func init() {
@@ -150,6 +152,8 @@ func init() {
 
 	rootCmd.Flags().BoolVarP(&timed, "time", "", false, "Measure time")
 	rootCmd.Flags().BoolVar(&lazyQuotes, "lazyquotes", false, "allow unescaped quotes")
+	rootCmd.Flags().BoolVar(&ignoreWhitespace, "ignore-whitespace", false, "ignore whitespace differences")
+
 }
 
 func timeTrack(start time.Time, name string) {

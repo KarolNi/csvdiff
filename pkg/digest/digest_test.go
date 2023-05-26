@@ -21,7 +21,7 @@ func TestCreateDigestWithSource(t *testing.T) {
 		Source: strings.Split(firstLine, comma),
 	}
 
-	actualDigest := digest.CreateDigest(strings.Split(firstLine, comma), comma, []int{0}, []int{})
+	actualDigest := digest.CreateDigest(strings.Split(firstLine, comma), comma, false, []int{0}, []int{})
 
 	assert.Equal(t, expectedDigest, actualDigest)
 }
@@ -94,7 +94,7 @@ func TestNewConfig(t *testing.T) {
 	include := digest.Positions{0, 1}
 
 	t.Run("should create config from given params", func(t *testing.T) {
-		conf := digest.NewConfig(r, primaryColumns, values, include, ',', false)
+		conf := digest.NewConfig(r, primaryColumns, values, include, ',', false, false)
 		expectedConf := digest.Config{
 			Reader:     r,
 			Key:        primaryColumns,
@@ -108,7 +108,7 @@ func TestNewConfig(t *testing.T) {
 	})
 
 	t.Run("should use valueColumns as includeColumns for includes not specified", func(t *testing.T) {
-		conf := digest.NewConfig(r, primaryColumns, values, nil, ',', false)
+		conf := digest.NewConfig(r, primaryColumns, values, nil, ',', false, false)
 		expectedConf := digest.Config{
 			Reader:     r,
 			Key:        primaryColumns,
