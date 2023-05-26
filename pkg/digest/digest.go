@@ -18,9 +18,9 @@ type Digest struct {
 
 // CreateDigest creates a Digest for each line of csv.
 // There will be one Digest per line
-func CreateDigest(csv []string, separator string, pKey Positions, pRow Positions) Digest {
-	key := xxhash.Sum64String(pKey.Join(csv, separator))
-	digest := xxhash.Sum64String(pRow.Join(csv, separator))
+func CreateDigest(csv []string, separator string, ignoreWhitespace bool, pKey Positions, pRow Positions) Digest {
+	key := xxhash.Sum64String(pKey.Join(csv, separator, ignoreWhitespace))
+	digest := xxhash.Sum64String(pRow.Join(csv, separator, ignoreWhitespace))
 
 	return Digest{Key: key, Value: digest, Source: csv}
 }
@@ -35,6 +35,7 @@ func Create(config *Config) (map[uint64]uint64, map[uint64][]string, error) {
 	reader := csv.NewReader(config.Reader)
 	reader.Comma = config.Separator
 	reader.LazyQuotes = config.LazyQuotes
+	reader.FieldsPerRecord = -1
 	output := make(map[uint64]uint64)
 	sourceMap := make(map[uint64][]string)
 
@@ -89,7 +90,7 @@ func createDigestForNLines(lines [][]string,
 	output := make([]Digest, len(lines))
 	separator := string(config.Separator)
 	for i, line := range lines {
-		output[i] = CreateDigest(line, separator, config.Key, config.Value)
+		output[i] = CreateDigest(line, separator, config.IgnoreWhitespace, config.Key, config.Value)
 	}
 
 	digestChannel <- output

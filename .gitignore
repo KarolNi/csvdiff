@@ -28,3 +28,4 @@ majestic_million*.csv
 
 # Output binary
 csvdiff
+.vscode/launch.json

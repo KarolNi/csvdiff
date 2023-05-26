@@ -41,7 +41,6 @@ $ csvdiff base.csv delta.csv
 - 1618,907,deleted-website.com,com,19827,32902,deleted-website.com,com,1621,909,19787,32822
 ```
 
-
 ```bash
 Differentiates two csv files and finds out the additions and modifications.
 Most suitable for csv files created from database tables
@@ -50,16 +49,21 @@ Usage:
   csvdiff <base-csv> <delta-csv> [flags]
 
 Flags:
-      --columns ints          Selectively compare positions in CSV Eg: 1,2. Default is entire row
-  -o, --format string         Available (rowmark|json|legacy-json|diff|word-diff|color-words) (default "diff")
-  -h, --help                  help for csvdiff
-      --ignore-columns ints   Inverse of --columns flag. This cannot be used if --columns are specified
-      --include ints          Include positions in CSV to display Eg: 1,2. Default is entire row
-  -p, --primary-key ints      Primary key positions of the Input CSV as comma separated values Eg: 1,2 (default [0])
-  -s, --separator string      use specific separator (\t, or any one character string) (default ",")
-      --time                  Measure time
-  -t, --toggle                Help message for toggle
-      --version               version for csvdiff
+      --columns ints             Selectively compare positions in CSV Eg: 1,2. Default is entire row
+      --delta-columns ints       Selectively compare positions in Delta-CSV Eg: 1,2. Default is entire row
+      --delta-include ints       Include positions in Delta-CSV to display Eg: 1,2. Default is entire row
+      --delta-primary-key ints   Primary key positions of the Input Delta-CSV as comma separated values Eg: 1,2 (default [0])
+  -o, --format string            Available (rowmark|json|legacy-json|diff|word-diff|color-words) (default "diff")
+  -h, --help                     help for csvdiff
+      --ignore-columns ints      Inverse of --columns flag. This cannot be used if --columns are specified
+      --ignore-whitespace        ignore whitespace differences
+      --include ints             Include positions in CSV to display Eg: 1,2. Default is entire row
+      --lazyquotes               allow unescaped quotes
+  -p, --primary-key ints         Primary key positions of the Input CSV as comma separated values Eg: 1,2 (default [0])
+  -s, --separator string         use specific separator (\t, or any one character string) (default ",")
+      --time                     Measure time
+  -t, --toggle                   Help message for toggle
+      --version                  version for csvdiff
 ```
 
 ## Installation
@@ -111,7 +115,7 @@ go get -u github.com/aswinkarthik/csvdiff
 There are a number of formats supported
 
 - `diff`: Git's diff style
-- `word-diff`: Git's --word-diff style 
+- `word-diff`: Git's --word-diff style
 - `color-words`: Git's --color-words style
 - `json`: JSON serialization of result
 - `legacy-json`: JSON serialization of result in old format
@@ -119,7 +123,7 @@ There are a number of formats supported
 
 ## Miscellaneous features
 
-- The `--primary-key` in an integer array. Specify comma separated positions if the table has a compound key. Using this primary key, it can figure out modifications. If the primary key changes, it is an addition.
+- The `--primary-key` (--delta-primary-key in the Delta) in an integer array. Specify comma separated positions if the table has a compound key. Using this primary key, it can figure out modifications. If the primary key changes, it is an addition.
 
 ```bash
 % csvdiff base.csv delta.csv --primary-key 0,1
